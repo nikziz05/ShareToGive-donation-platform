@@ -11,7 +11,7 @@ const DonorSchedules = () => {
 
   const loadSchedules = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/schedules/my-schedules', {
+      const response = await fetch('https://kindnest1-backend.onrender.com/api/schedules/my-schedules', {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const data = await response.json();
