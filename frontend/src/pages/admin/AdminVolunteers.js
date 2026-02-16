@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Users, Mail, Phone, Calendar, UserCheck, UserX } from 'lucide-react';
 
+// IMPORT THE API URL FROM CONFIG
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
+
 const AdminVolunteers = () => {
   const [volunteers, setVolunteers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,7 +27,7 @@ const AdminVolunteers = () => {
 
   const loadVolunteers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/volunteers', {
+      const response = await fetch(`${API_BASE_URL}/volunteers`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const data = await response.json();
@@ -121,8 +124,8 @@ const AdminVolunteers = () => {
     
     try {
       const url = editingVolunteer 
-        ? `http://localhost:5000/api/volunteers/${editingVolunteer._id}`
-        : 'http://localhost:5000/api/volunteers';
+        ? `${API_BASE_URL}/volunteers/${editingVolunteer._id}`
+        : `${API_BASE_URL}/volunteers`;
       
       const method = editingVolunteer ? 'PUT' : 'POST';
       
@@ -148,7 +151,7 @@ const AdminVolunteers = () => {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to remove this volunteer?')) {
       try {
-        await fetch(`http://localhost:5000/api/volunteers/${id}`, {
+        await fetch(`${API_BASE_URL}/volunteers/${id}`, {
           method: 'DELETE',
           headers: { 'x-auth-token': localStorage.getItem('token') }
         });
@@ -163,7 +166,7 @@ const AdminVolunteers = () => {
   const toggleStatus = async (volunteer) => {
     const newStatus = volunteer.status === 'active' ? 'inactive' : 'active';
     try {
-      await fetch(`http://localhost:5000/api/volunteers/${volunteer._id}`, {
+      await fetch(`${API_BASE_URL}/volunteers/${volunteer._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -253,7 +256,7 @@ const AdminVolunteers = () => {
                        try {
                           console.log('Approving volunteer:', v.name);
                           console.log('Volunteer email:', v.email);
-                          const response = await fetch(`http://localhost:5000/api/volunteers/${v._id}`, {
+                          const response = await fetch(`${API_BASE_URL}/volunteers/${v._id}`, {
                           method: 'PUT',
                           headers: {
                               'Content-Type': 'application/json',
