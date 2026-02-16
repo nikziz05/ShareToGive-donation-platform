@@ -6,7 +6,7 @@ import { Clock, MapPin, User, Phone, Check, X, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const localizer = momentLocalizer(moment);
-
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const AdminSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [events, setEvents] = useState([]);
@@ -30,7 +30,7 @@ const AdminSchedules = () => {
 
 const loadSchedules = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/schedules', {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const data = await response.json();
@@ -61,7 +61,7 @@ const loadSchedules = async () => {
 };
   const loadVolunteers = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/volunteers', {
+      const response = await fetch(`${API_BASE_URL}/volunteers`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const data = await response.json();
@@ -214,7 +214,7 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
 
   const updateScheduleStatus = async (scheduleId, newStatus) => {
     try {
-      await fetch(`http://localhost:5000/api/schedules/${scheduleId}`, {
+      await fetch(`${API_BASE_URL}/schedules/${scheduleId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -237,7 +237,7 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
     }
     
     try {
-      await fetch(`http://localhost:5000/api/schedules/${selectedEvent._id}`, {
+      await fetch(`${API_BASE_URL}/schedules/${selectedEvent._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
