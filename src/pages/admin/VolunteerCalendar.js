@@ -22,7 +22,7 @@ const VolunteerCalendar = () => {
 
 const loadVolunteers = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/volunteers', {
+    const response = await fetch('https://kindnest1-backend.onrender.com/api/volunteers', {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const data = await response.json();
