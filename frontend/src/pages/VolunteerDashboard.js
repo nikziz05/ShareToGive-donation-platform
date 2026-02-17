@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Package, Phone, Mail, CheckCircle, AlertCircle, User} from 'lucide-react';
-
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const VolunteerDashboard = () => {
   const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,14 +22,14 @@ const VolunteerDashboard = () => {
       }
 
       // Fetch volunteer details
-      const volResponse = await fetch(`http://localhost:5000/api/volunteers/${volunteerId}`, {
+      const volResponse = await fetch(`${API_BASE_URL}/volunteers/${volunteerId}`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const volData = await volResponse.json();
       setVolunteer(volData);
 
       // Fetch assigned schedules
-      const schedResponse = await fetch(`http://localhost:5000/api/schedules/volunteer/${volunteerId}`, {
+      const schedResponse = await fetch(`${API_BASE_URL}/schedules/volunteer/${volunteerId}`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const schedData = await schedResponse.json();
@@ -60,7 +60,7 @@ const VolunteerDashboard = () => {
 
   const updateAssignmentStatus = async (scheduleId, status) => {
     try {
-      await fetch(`http://localhost:5000/api/schedules/${scheduleId}`, {
+      await fetch(`${API_BASE_URL}/schedules/${scheduleId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -360,7 +360,7 @@ const VolunteerDashboard = () => {
 //OTP verification function
 const verifyOTP = async (scheduleId, otp) => {
   try {
-    const response = await fetch(`http://localhost:5000/api/schedules/${scheduleId}/verify-otp`, {
+    const response = await fetch(`${API_BASE_URL}/schedules/${scheduleId}/verify-otp`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
