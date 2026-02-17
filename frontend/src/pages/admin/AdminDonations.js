@@ -230,7 +230,7 @@ const openVolunteerModal = async (donation) => {
   
   try {
     console.log('3. Fetching schedules...');
-    const response = await fetch(`${API_BASE_URL}/schedules`', {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const allSchedules = await response.json();
