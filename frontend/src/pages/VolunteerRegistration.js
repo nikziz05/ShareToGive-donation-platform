@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Heart, User, Mail, Phone, Calendar, MapPin, CheckCircle, ArrowLeft } from 'lucide-react';
-
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const VolunteerRegistration = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -77,7 +77,7 @@ const VolunteerRegistration = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/volunteers/register', {
+      const response = await fetch(`${API_BASE_URL}/volunteers/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
