@@ -204,7 +204,7 @@ router.put('/:id/status', auth, async(req, res) => {
                 ${donation.type === 'physical' ? '<p>Our team will contact you soon regarding the pickup/drop-off schedule.</p>' : '<p>Thank you for your generous contribution!</p>'}
                 
                 <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                  Track your donation anytime at <a href="http://localhost:3000/my-donations">My Donations</a>
+                  Track your donation anytime at <a href="${process.env.FRONTEND_URL || 'https://kindnest-tau.vercel.app'}">My Donations</a>
                 </p>
               </div>
             </div>
@@ -234,7 +234,7 @@ router.put('/:id/status', auth, async(req, res) => {
                 <p>Please browse other active needs where your contribution can make a difference!</p>
                 
                 <p style="text-align: center; margin-top: 30px;">
-                  <a href="http://localhost:3000" style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Browse Needs</a>
+                  <a href="${process.env.FRONTEND_URL || 'https://kindnest-tau.vercel.app'}" style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Browse Needs</a>
                 </p>
               </div>
             </div>
