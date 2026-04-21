@@ -89,26 +89,15 @@ Labeling guide:
 
 Be objective and helpful. If the image is unclear or doesn't show the item well, return "poor" with a note to retake the photo.`;
 
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514',
-          max_tokens: 300,
-          messages: [
-            {
-              role: 'user',
-              content: [
-                {
-                  type: 'image',
-                  source: { type: 'base64', media_type: mediaType, data: base64Data },
-                },
-                { type: 'text', text: prompt },
-              ],
-            },
-          ],
-        }),
-      });
+
+const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://kindnest1-backend.onrender.com'}/api/verify-image`, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'x-auth-token': localStorage.getItem('token')
+  },
+  body: JSON.stringify({ base64Data, mediaType, itemName }),
+});
 
       if (!response.ok) {
         throw new Error(`API error: ${response.status}`);
