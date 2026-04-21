@@ -54,6 +54,7 @@ app.use('/api/donations', require('./routes/donations'));
 app.use('/api/schedules', require('./routes/schedules'));
 app.use('/api/inventory', require('./routes/inventory'));
 app.use('/api/volunteers', require('./routes/volunteers'));
+app.use('/api/verify-image', require('./routes/verifyImage'));
 
 // Error handling middleware
 app.use((err, req, res, next) => {
