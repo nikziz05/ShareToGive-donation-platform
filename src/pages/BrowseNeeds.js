@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { needsAPI, donationsAPI } from '../services/api';
 import { Search, Heart, Package } from 'lucide-react';
+import DonationImageVerifier from './../components/DonationImageVerifier';
 
 const BrowseNeeds = () => {
   const [needs, setNeeds] = useState([]);
@@ -22,6 +23,7 @@ const BrowseNeeds = () => {
     notes: '',
     itemConditionConfirmed: false
   });
+  const [imageVerification, setImageVerification] = useState(null);
 
   useEffect(() => {
     loadNeeds();
@@ -42,6 +44,7 @@ const BrowseNeeds = () => {
     setSelectedNeed(need);
     setDonationType(type);
     setShowModal(true);
+    setImageVerification(null);
     setDonationForm({
       amount: '',
       items: '',
