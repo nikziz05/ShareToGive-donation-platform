@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { needsAPI, donationsAPI } from '../services/api';
 import { Search, Heart, Package } from 'lucide-react';
-import DonationImageVerifier from './../components/DonationImageVerifier';
+import DonationImageVerifier from './../components/DonationImage';
 
 const BrowseNeeds = () => {
   const [needs, setNeeds] = useState([]);
