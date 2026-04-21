@@ -11,8 +11,8 @@ const DonorSchedules = () => {
 
   const loadSchedules = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`, {
-        headers: { 'x-auth-token': localStorage.getItem('token') }
+      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`,{
+        headers: {'x-auth-token': localStorage.getItem('token') }
       });
       const data = await response.json();
       //Sort schedules: completed last, then by date (newest first)
