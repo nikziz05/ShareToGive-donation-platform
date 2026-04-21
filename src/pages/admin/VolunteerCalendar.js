@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { Users, Calendar as CalendarIcon, Clock, ArrowRight } from 'lucide-react';
+import { Users, Calendar as CalendarIcon, ArrowRight } from 'lucide-react';
 import { API_BASE_URL } from '../../config';
+
 const localizer = momentLocalizer(moment);
 
 const VolunteerCalendar = () => {
@@ -20,147 +21,109 @@ const VolunteerCalendar = () => {
     loadVolunteers();
   }, []);
 
-const loadVolunteers = async () => {
-  try {
-<<<<<<< Updated upstream
-    const response = await fetch('https://kindnest1-backend.onrender.com/api/volunteers', {
-=======
-    const response = await fetch(`${API_BASE_URL}/volunteers`, {
->>>>>>> Stashed changes
-      headers: { 'x-auth-token': localStorage.getItem('token') }
-    });
-    const data = await response.json();
-    
-    const activeVolunteers = data.filter(v => v.status === 'active');
-    setVolunteers(activeVolunteers);
-    
-    const calendarEvents = [];
-    
-    activeVolunteers.forEach(volunteer => {
-      if (!volunteer.availability) {
-        console.warn(`Volunteer ${volunteer.name} has no availability set`);
-        return;
-      }
+  const loadVolunteers = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/volunteers`, {
+        headers: { 'x-auth-token': localStorage.getItem('token') }
+      });
+      const data = await response.json();
       
-      console.log(`Processing ${volunteer.name}: ${volunteer.availability}`);
+      const activeVolunteers = data.filter(v => v.status === 'active');
+      setVolunteers(activeVolunteers);
       
-      // Extract time range first (before processing days)
-      const timeMatch = volunteer.availability.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
-      if (!timeMatch) {
-        console.warn(`Invalid time format for ${volunteer.name}: ${volunteer.availability}`);
-        return;
-      }
+      const calendarEvents = [];
       
-      const startTime = timeMatch[1];
-      const endTime = timeMatch[2];
-      
-      // Remove time from string before processing days
-      const daysString = volunteer.availability.split(/\d{2}:\d{2}/)[0].trim();
-      console.log(`Days string for ${volunteer.name}: "${daysString}"`);
-      
-      // Map day abbreviations to full names
-      const dayAbbreviations = {
-        'mon': 'Monday',
-        'tue': 'Tuesday', 
-        'wed': 'Wednesday',
-        'thu': 'Thursday',
-        'fri': 'Friday',
-        'sat': 'Saturday',
-        'sun': 'Sunday',
-        'monday': 'Monday',
-        'tuesday': 'Tuesday',
-        'wednesday': 'Wednesday',
-        'thursday': 'Thursday',
-        'friday': 'Friday',
-        'saturday': 'Saturday',
-        'sunday': 'Sunday'
-      };
-      
-      let targetDays = [];
-      
-      // Handle special day formats
-      if (daysString.toLowerCase().includes('all days')) {
-        targetDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        console.log(`${volunteer.name}: All days`);
-      } 
-      else if (daysString.toLowerCase().includes('weekdays')) {
-        targetDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-        console.log(`${volunteer.name}: Weekdays`);
-      } 
-      else if (daysString.toLowerCase().includes('weekends')) {
-        targetDays = ['Saturday', 'Sunday'];
-        console.log(`${volunteer.name}: Weekends`);
-      } 
-      else {
-        // Parse individual comma-separated days
-        const dayParts = daysString.split(',').map(d => d.trim().toLowerCase());
-        
-        targetDays = dayParts
-          .map(dayAbbr => {
-            // Clean the abbreviation (remove any extra characters)
-            const cleanAbbr = dayAbbr.replace(/[^a-z]/gi, '').toLowerCase();
-            const fullDay = dayAbbreviations[cleanAbbr];
-            
-            if (!fullDay) {
-              console.warn(`Could not parse day: "${dayAbbr}" (cleaned: "${cleanAbbr}")`);
-            }
-            
-            return fullDay;
-          })
-          .filter(Boolean); // Remove undefined values
-        
-        console.log(`${volunteer.name}: Specific days:`, targetDays);
-      }
-      
-      if (targetDays.length === 0) {
-        console.warn(`No valid days found for ${volunteer.name}`);
-        return;
-      }
-      
-      // Generate events for next 60 days
-      const today = new Date();
-      let eventsAdded = 0;
-      
-      for (let i = 0; i < 60; i++) {
-        const date = new Date(today);
-        date.setDate(date.getDate() + i);
-        
-        const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
-        
-        // Check if this day matches volunteer's availability
-        if (targetDays.includes(dayName)) {
-          const [startHour, startMin] = startTime.split(':');
-          const [endHour, endMin] = endTime.split(':');
-          
-          const eventStart = new Date(date);
-          eventStart.setHours(parseInt(startHour), parseInt(startMin), 0);
-          
-          const eventEnd = new Date(date);
-          eventEnd.setHours(parseInt(endHour), parseInt(endMin), 0);
-          
-          calendarEvents.push({
-            id: `${volunteer._id}-${i}`,
-            title: `${volunteer.name} - ${volunteer.role}`,
-            start: eventStart,
-            end: eventEnd,
-            resource: volunteer
-          });
-          
-          eventsAdded++;
+      activeVolunteers.forEach(volunteer => {
+        if (!volunteer.availability) {
+          console.warn(`Volunteer ${volunteer.name} has no availability set`);
+          return;
         }
-      }
+        
+        console.log(`Processing ${volunteer.name}: ${volunteer.availability}`);
+        
+        const timeMatch = volunteer.availability.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+        if (!timeMatch) {
+          console.warn(`Invalid time format for ${volunteer.name}: ${volunteer.availability}`);
+          return;
+        }
+        
+        const startTime = timeMatch[1];
+        const endTime = timeMatch[2];
+        
+        const daysString = volunteer.availability.split(/\d{2}:\d{2}/)[0].trim();
+        
+        const dayAbbreviations = {
+          'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday',
+          'thu': 'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
+          'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
+          'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday'
+        };
+        
+        let targetDays = [];
+        
+        if (daysString.toLowerCase().includes('all days')) {
+          targetDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        } else if (daysString.toLowerCase().includes('weekdays')) {
+          targetDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+        } else if (daysString.toLowerCase().includes('weekends')) {
+          targetDays = ['Saturday', 'Sunday'];
+        } else {
+          const dayParts = daysString.split(',').map(d => d.trim().toLowerCase());
+          targetDays = dayParts
+            .map(dayAbbr => {
+              const cleanAbbr = dayAbbr.replace(/[^a-z]/gi, '').toLowerCase();
+              return dayAbbreviations[cleanAbbr];
+            })
+            .filter(Boolean);
+        }
+        
+        if (targetDays.length === 0) {
+          console.warn(`No valid days found for ${volunteer.name}`);
+          return;
+        }
+        
+        const today = new Date();
+        let eventsAdded = 0;
+        
+        for (let i = 0; i < 60; i++) {
+          const date = new Date(today);
+          date.setDate(date.getDate() + i);
+          
+          const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+          
+          if (targetDays.includes(dayName)) {
+            const [startHour, startMin] = startTime.split(':');
+            const [endHour, endMin] = endTime.split(':');
+            
+            const eventStart = new Date(date);
+            eventStart.setHours(parseInt(startHour), parseInt(startMin), 0);
+            
+            const eventEnd = new Date(date);
+            eventEnd.setHours(parseInt(endHour), parseInt(endMin), 0);
+            
+            calendarEvents.push({
+              id: `${volunteer._id}-${i}`,
+              title: `${volunteer.name} - ${volunteer.role}`,
+              start: eventStart,
+              end: eventEnd,
+              resource: volunteer
+            });
+            
+            eventsAdded++;
+          }
+        }
+        
+        console.log(`Added ${eventsAdded} events for ${volunteer.name}`);
+      });
       
-      console.log(`Added ${eventsAdded} events for ${volunteer.name}`);
-    });
-    
-    console.log(`\nTotal: Generated ${calendarEvents.length} calendar events from ${activeVolunteers.length} volunteers`);
-    setEvents(calendarEvents);
-    setLoading(false);
-  } catch (error) {
-    console.error('Error loading volunteers:', error);
-    setLoading(false);
-  }
-};
+      console.log(`Total: Generated ${calendarEvents.length} calendar events from ${activeVolunteers.length} volunteers`);
+      setEvents(calendarEvents);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading volunteers:', error);
+      setLoading(false);
+    }
+  };
 
   const handleSelectEvent = (event) => {
     setSelectedEvent(event);
@@ -169,16 +132,16 @@ const loadVolunteers = async () => {
 
   const eventStyleGetter = (event) => {
     const roleColors = {
-      'Pickup Driver': '#3b82f6',           // Blue
-    'Delivery Coordinator': '#10b981',    // Green
-    'Donation Sorter': '#8b5cf6',         // Purple
-    'Inventory Manager': '#f59e0b',       // Orange
-    'Warehouse Helper': '#ec4899',        // Pink
-    'Event Coordinator': '#14b8a6',       // Teal
-    'Food Distribution': '#ef4444',       // Red
-    'Community Outreach': '#8b5cf6',      // Purple
-    'Administrative Support': '#6366f1',  // Indigo
-    'default': '#6b7280'                  // Gray (for "Other" role only)
+      'Pickup Driver': '#3b82f6',
+      'Delivery Coordinator': '#10b981',
+      'Donation Sorter': '#8b5cf6',
+      'Inventory Manager': '#f59e0b',
+      'Warehouse Helper': '#ec4899',
+      'Event Coordinator': '#14b8a6',
+      'Food Distribution': '#ef4444',
+      'Community Outreach': '#8b5cf6',
+      'Administrative Support': '#6366f1',
+      'default': '#6b7280'
     };
     
     const color = roleColors[event.resource.role] || roleColors.default;
@@ -224,49 +187,27 @@ const loadVolunteers = async () => {
           </Link>
         </div>
 
-        
-
         <div className="bg-white rounded-xl shadow-md p-4 mb-6">
-  <h3 className="font-semibold text-gray-800 mb-3">Role Color Legend:</h3>
-  <div className="flex flex-wrap gap-4">
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#3b82f6' }}></div>
-      <span className="text-sm">Pickup Driver</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#10b981' }}></div>
-      <span className="text-sm">Delivery Coordinator</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#8b5cf6' }}></div>
-      <span className="text-sm">Donation Sorter</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#f59e0b' }}></div>
-      <span className="text-sm">Inventory Manager</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#ec4899' }}></div>
-      <span className="text-sm">Warehouse Helper</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#14b8a6' }}></div>
-      <span className="text-sm">Event Coordinator</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#ef4444' }}></div>
-      <span className="text-sm">Food Distribution</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#6366f1' }}></div>
-      <span className="text-sm">Administrative Support</span>
-    </div>
-    <div className="flex items-center space-x-2">
-      <div className="w-4 h-4 rounded" style={{ backgroundColor: '#6b7280' }}></div>
-      <span className="text-sm">Other</span>
-    </div>
-  </div>
-</div>
+          <h3 className="font-semibold text-gray-800 mb-3">Role Color Legend:</h3>
+          <div className="flex flex-wrap gap-4">
+            {[
+              { color: '#3b82f6', label: 'Pickup Driver' },
+              { color: '#10b981', label: 'Delivery Coordinator' },
+              { color: '#8b5cf6', label: 'Donation Sorter' },
+              { color: '#f59e0b', label: 'Inventory Manager' },
+              { color: '#ec4899', label: 'Warehouse Helper' },
+              { color: '#14b8a6', label: 'Event Coordinator' },
+              { color: '#ef4444', label: 'Food Distribution' },
+              { color: '#6366f1', label: 'Administrative Support' },
+              { color: '#6b7280', label: 'Other' }
+            ].map(({ color, label }) => (
+              <div key={label} className="flex items-center space-x-2">
+                <div className="w-4 h-4 rounded" style={{ backgroundColor: color }}></div>
+                <span className="text-sm">{label}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
         <div className="bg-white rounded-xl shadow-md p-6" style={{ height: '700px' }}>
           <Calendar
@@ -298,34 +239,28 @@ const loadVolunteers = async () => {
                 <p className="text-sm text-gray-500">Name</p>
                 <p className="font-semibold text-gray-800">{selectedEvent.resource.name}</p>
               </div>
-              
               <div>
                 <p className="text-sm text-gray-500">Role</p>
                 <p className="font-semibold text-gray-800">{selectedEvent.resource.role}</p>
               </div>
-              
               <div>
                 <p className="text-sm text-gray-500">Phone</p>
                 <p className="font-semibold text-gray-800">{selectedEvent.resource.phone}</p>
               </div>
-              
               {selectedEvent.resource.email && selectedEvent.resource.email !== 'N/A' && (
                 <div>
                   <p className="text-sm text-gray-500">Email</p>
                   <p className="font-semibold text-gray-800">{selectedEvent.resource.email}</p>
                 </div>
               )}
-              
               <div>
                 <p className="text-sm text-gray-500">Full Availability</p>
                 <p className="font-semibold text-gray-800">{selectedEvent.resource.availability}</p>
               </div>
-              
               <div>
                 <p className="text-sm text-gray-500">This Time Slot</p>
                 <p className="font-semibold text-gray-800">
-                  {selectedEvent.start.toLocaleDateString()} 
-                  <br />
+                  {selectedEvent.start.toLocaleDateString()} <br />
                   {selectedEvent.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {selectedEvent.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </p>
               </div>
@@ -338,7 +273,6 @@ const loadVolunteers = async () => {
               >
                 Assign to Pickup Schedule →
               </Link>
-              
               <button
                 onClick={() => setShowModal(false)}
                 className="w-full bg-gray-200 text-gray-700 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
