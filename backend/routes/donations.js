@@ -90,7 +90,6 @@ router.post('/', auth, async(req, res) => {
                 });
             }
         }
-
         await donation.save();
 
         // Update need progress if physical donation

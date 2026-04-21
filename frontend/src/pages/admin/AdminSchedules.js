@@ -6,7 +6,7 @@ import { Clock, MapPin, User, Phone, Check, X, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const localizer = momentLocalizer(moment);
-
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const AdminSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [events, setEvents] = useState([]);

@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Users, Calendar as CalendarIcon, Clock, ArrowRight } from 'lucide-react';
-
+import { API_BASE_URL } from '../../config';
 const localizer = momentLocalizer(moment);
 
 const VolunteerCalendar = () => {
@@ -22,7 +22,11 @@ const VolunteerCalendar = () => {
 
 const loadVolunteers = async () => {
   try {
+<<<<<<< Updated upstream
     const response = await fetch('https://kindnest1-backend.onrender.com/api/volunteers', {
+=======
+    const response = await fetch(`${API_BASE_URL}/volunteers`, {
+>>>>>>> Stashed changes
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const data = await response.json();

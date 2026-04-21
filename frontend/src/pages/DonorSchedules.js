@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Package, User, Phone, Mail } from 'lucide-react';
-
+import { API_BASE_URL } from '../config';
 const DonorSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,8 +11,13 @@ const DonorSchedules = () => {
 
   const loadSchedules = async () => {
     try {
+<<<<<<< Updated upstream
       const response = await fetch('https://kindnest1-backend.onrender.com/api/schedules/my-schedules', {
         headers: { 'x-auth-token': localStorage.getItem('token') }
+=======
+      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`,{
+        headers: {'x-auth-token': localStorage.getItem('token') }
+>>>>>>> Stashed changes
       });
       const data = await response.json();
       //Sort schedules: completed last, then by date (newest first)
