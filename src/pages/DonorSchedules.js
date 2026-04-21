@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Package, User, Phone, Mail } from 'lucide-react';
-
+import { API_BASE_URL } from '../config';
 const DonorSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +11,7 @@ const DonorSchedules = () => {
 
   const loadSchedules = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/schedules/my-schedules', {
+      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const data = await response.json();

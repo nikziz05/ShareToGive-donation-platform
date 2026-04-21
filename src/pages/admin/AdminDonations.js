@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { donationsAPI } from '../../services/api';
 import { Package, IndianRupee, Calendar, User, TrendingUp, MapPin, Truck, Users } from 'lucide-react';
-
+const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
 const AdminDonations = () => {
   const [donations, setDonations] = useState([]);
   const [schedules, setSchedules] = useState([]);
@@ -51,7 +51,7 @@ const AdminDonations = () => {
 
   const loadLocations = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/inventory', {
+      const response = await fetch(`${API_BASE_URL}/inventory`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
       });
       const inventory = await response.json();
@@ -64,7 +64,7 @@ const AdminDonations = () => {
 
   const loadVolunteers = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/volunteers', {
+    const response = await fetch(`${API_BASE_URL}/volunteers`, {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const data = await response.json();
@@ -86,7 +86,7 @@ const AdminDonations = () => {
 
   const loadSchedules = async () => {
   try {
-    const response = await fetch('http://localhost:5000/api/schedules', {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const data = await response.json();
@@ -230,7 +230,7 @@ const openVolunteerModal = async (donation) => {
   
   try {
     console.log('3. Fetching schedules...');
-    const response = await fetch('http://localhost:5000/api/schedules', {
+    const response = await fetch(`${API_BASE_URL}/schedules`, {
       headers: { 'x-auth-token': localStorage.getItem('token') }
     });
     const allSchedules = await response.json();
@@ -350,7 +350,7 @@ const handleRejectionSubmit = async () => {
     : rejectionReason;
 
   try {
-    await fetch(`http://localhost:5000/api/donations/${donationToReject._id}/status`, {
+    await fetch(`${API_BASE_URL}/donations/${donationToReject._id}/status`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -379,7 +379,7 @@ const handleRejectionSubmit = async () => {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/api/donations/${selectedDonation._id}/status`, {
+      const response = await fetch(`${API_BASE_URL}/donations/${selectedDonation._id}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -422,7 +422,7 @@ const handleRejectionSubmit = async () => {
     }
 
     try {
-      await fetch(`http://localhost:5000/api/schedules/${scheduleId}`, {
+      await fetch(`${API_BASE_URL}/schedules/${scheduleId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
