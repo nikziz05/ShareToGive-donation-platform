@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { needsAPI, donationsAPI } from '../services/api';
 import { Search, Heart, Package } from 'lucide-react';
+import DonationImageVerifier from './../components/DonationImage';
 
 const BrowseNeeds = () => {
   const [needs, setNeeds] = useState([]);
@@ -22,6 +23,7 @@ const BrowseNeeds = () => {
     notes: '',
     itemConditionConfirmed: false
   });
+  const [imageVerification, setImageVerification] = useState(null);
 
   useEffect(() => {
     loadNeeds();
@@ -42,6 +44,7 @@ const BrowseNeeds = () => {
     setSelectedNeed(need);
     setDonationType(type);
     setShowModal(true);
+    setImageVerification(null);
     setDonationForm({
       amount: '',
       items: '',
@@ -51,7 +54,8 @@ const BrowseNeeds = () => {
       scheduleTime: '',
       address: '',
       phone: '',
-      notes: ''
+      notes: '',
+      itemConditionConfirmed: false
     });
   };
 
@@ -71,6 +75,10 @@ const BrowseNeeds = () => {
       if (!donationForm.itemConditionConfirmed) {
         alert('Please confirm that your items are in good condition before donating.');
         return;
+      }
+
+      if (imageVerification && !imageVerification.canDonate) {
+        if (!window.confirm('AI detected this item may be in poor condition. Submit anyway?')) return;
       }
 
       const quantity = parseInt(donationForm.quantity);
@@ -471,6 +479,13 @@ const BrowseNeeds = () => {
       </p>
     )}
   </div>
+{donationForm.items && (       
+  <DonationImageVerifier
+    itemName={donationForm.items}
+    onVerified={(result) => setImageVerification(result)}
+    onReset={() => setImageVerification(null)}
+  />
+)}
                 </>
               )}
 
@@ -493,7 +508,22 @@ const BrowseNeeds = () => {
                   Confirm Donation
                 </button>
                 <button
-                  onClick={() => setShowModal(false)}
+                  onClick={() => {
+  setShowModal(false);
+  setImageVerification(null);
+  setDonationForm({
+    amount: '',
+    items: '',
+    quantity: '',
+    deliveryMethod: 'drop-off',
+    scheduleDate: '',
+    scheduleTime: '',
+    address: '',
+    phone: '',
+    notes: '',
+    itemConditionConfirmed: false
+  });
+}}
                   className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
                 >
                   Cancel

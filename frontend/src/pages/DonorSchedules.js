@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, MapPin, Package, User, Phone, Mail } from 'lucide-react';
 import { API_BASE_URL } from '../config';
+
 const DonorSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,27 +12,22 @@ const DonorSchedules = () => {
 
   const loadSchedules = async () => {
     try {
-<<<<<<< Updated upstream
-      const response = await fetch('https://kindnest1-backend.onrender.com/api/schedules/my-schedules', {
+      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`, {
         headers: { 'x-auth-token': localStorage.getItem('token') }
-=======
-      const response = await fetch(`${API_BASE_URL}/schedules/my-schedules`,{
-        headers: {'x-auth-token': localStorage.getItem('token') }
->>>>>>> Stashed changes
       });
       const data = await response.json();
-      //Sort schedules: completed last, then by date (newest first)
-    const sortedSchedules = data.sort((a, b) => {
-      // Priority 1: Completed schedules go to bottom
-      if (a.status === 'completed' && b.status !== 'completed') return 1;
-      if (a.status !== 'completed' && b.status === 'completed') return -1;
-      
-      // Priority 2: Sort by date and time (newest first)
-      const dateA = new Date(`${a.date}T${a.time}`);
-      const dateB = new Date(`${b.date}T${b.time}`);
-      return dateB - dateA; // Descending order
-    });
-      setSchedules(data);
+      // Sort schedules: completed last, then by date (newest first)
+      const sortedSchedules = data.sort((a, b) => {
+        // Priority 1: Completed schedules go to bottom
+        if (a.status === 'completed' && b.status !== 'completed') return 1;
+        if (a.status !== 'completed' && b.status === 'completed') return -1;
+        
+        // Priority 2: Sort by date and time (newest first)
+        const dateA = new Date(`${a.date}T${a.time}`);
+        const dateB = new Date(`${b.date}T${b.time}`);
+        return dateB - dateA; // Descending order
+      });
+      setSchedules(sortedSchedules);
       setLoading(false);
     } catch (error) {
       console.error('Error loading schedules:', error);
@@ -150,7 +146,7 @@ const DonorSchedules = () => {
                           {schedule.assignedVolunteer.phone}
                         </a>
                       </div>
-                      {schedule.assignedVolunteer.email && schedule.assignedVolunteer.email !== 'N/A' &&  (
+                      {schedule.assignedVolunteer.email && schedule.assignedVolunteer.email !== 'N/A' && (
                         <div className="flex items-center text-sm text-gray-600">
                           <Mail className="w-4 h-4 mr-2 text-blue-500" />
                           <a 
@@ -165,32 +161,32 @@ const DonorSchedules = () => {
                   </div>
                 )}
 
-                {/* After volunteer information, ADD: */}
-{schedule.otp && !schedule.otpVerified && (
-  <div className="mt-4 pt-4 border-t bg-green-50 rounded-lg p-4">
-    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
-      Pickup Verification Code
-    </h4>
-    <div className="text-center p-6 bg-white rounded-lg border-4 border-dashed border-green-500">
-      <p className="text-xs text-gray-500 mb-2">SHARE WITH VOLUNTEER</p>
-      <p className="text-5xl font-bold text-green-600 tracking-widest mb-2">
-        {schedule.otp}
-      </p>
-      <p className="text-xs text-gray-500">Valid for this pickup only</p>
-    </div>
-    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
-      <p className="text-xs text-yellow-800">
-        <strong>Important:</strong> Only share this code with the volunteer in person. Do not send via phone or message.
-      </p>
-    </div>
-  </div>
-)}
+                {/* OTP Section */}
+                {schedule.otp && !schedule.otpVerified && (
+                  <div className="mt-4 pt-4 border-t bg-green-50 rounded-lg p-4">
+                    <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                      Pickup Verification Code
+                    </h4>
+                    <div className="text-center p-6 bg-white rounded-lg border-4 border-dashed border-green-500">
+                      <p className="text-xs text-gray-500 mb-2">SHARE WITH VOLUNTEER</p>
+                      <p className="text-5xl font-bold text-green-600 tracking-widest mb-2">
+                        {schedule.otp}
+                      </p>
+                      <p className="text-xs text-gray-500">Valid for this pickup only</p>
+                    </div>
+                    <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+                      <p className="text-xs text-yellow-800">
+                        <strong>Important:</strong> Only share this code with the volunteer in person. Do not send via phone or message.
+                      </p>
+                    </div>
+                  </div>
+                )}
 
-{schedule.otpVerified && (
-  <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded flex items-center">
-    <span className="text-sm font-medium text-green-800">Pickup verified successfully</span>
-  </div>
-)}
+                {schedule.otpVerified && (
+                  <div className="mt-4 p-3 bg-green-100 border border-green-300 rounded flex items-center">
+                    <span className="text-sm font-medium text-green-800">Pickup verified successfully</span>
+                  </div>
+                )}
 
                 {/* If no volunteer assigned yet */}
                 {!schedule.assignedVolunteer && schedule.status === 'confirmed' && (

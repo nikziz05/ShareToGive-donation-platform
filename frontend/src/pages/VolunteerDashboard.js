@@ -34,7 +34,7 @@ const VolunteerDashboard = () => {
       });
       const schedData = await schedResponse.json();
       // Sort assignments: completed last, urgent first
-    const sortedAssignments = schedData.sort((a, b) => {
+      const sortedAssignments = schedData.sort((a, b) => {
       // Priority 1: Completed at bottom
       if (a.status === 'completed' && b.status !== 'completed') return 1;
       if (a.status !== 'completed' && b.status === 'completed') return -1;

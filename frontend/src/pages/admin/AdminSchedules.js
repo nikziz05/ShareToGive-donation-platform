@@ -4,9 +4,10 @@ import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { Clock, MapPin, User, Phone, Check, X, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
-const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
+import { API_BASE_URL } from '../../config';
+
 const localizer = momentLocalizer(moment);
-const API_BASE_URL = 'https://kindnest1-backend.onrender.com/api';
+
 const AdminSchedules = () => {
   const [schedules, setSchedules] = useState([]);
   const [events, setEvents] = useState([]);
@@ -23,42 +24,43 @@ const AdminSchedules = () => {
     loadSchedules();
     loadVolunteers();
     const interval = setInterval(() => {
-    loadSchedules();
-  }, 30000);
-  return () => clearInterval(interval);
+      loadSchedules();
+    }, 30000);
+    return () => clearInterval(interval);
   }, []);
 
-const loadSchedules = async () => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/schedules`, {
-      headers: { 'x-auth-token': localStorage.getItem('token') }
-    });
-    const data = await response.json();
-    
-    console.log('=== SCHEDULE DEBUG ===');
-    console.log('Total:', data.length);
-    console.log('Pending:', data.filter(s => s.status === 'pending').length);
-    console.log('Confirmed:', data.filter(s => s.status === 'confirmed').length);
-    console.log('Completed:', data.filter(s => s.status === 'completed').length);
-    
-    setSchedules(data);
-    
-    // Create calendar events
-    const calendarEvents = data.map(schedule => ({
-      id: schedule._id,
-      title: `${schedule.type === 'pickup' ? 'Pickup' : 'Drop-off'} - ${schedule.donorId?.name || 'Donor'}`,
-      start: new Date(`${schedule.date.split('T')[0]}T${schedule.time}`),
-      end: new Date(new Date(`${schedule.date.split('T')[0]}T${schedule.time}`).getTime() + 3600000),
-      resource: schedule
-    }));
-    
-    setEvents(calendarEvents);
-    setLoading(false);
-  } catch (error) {
-    console.error('Error loading schedules:', error);
-    setLoading(false);
-  }
-};
+  const loadSchedules = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/schedules`, {
+        headers: { 'x-auth-token': localStorage.getItem('token') }
+      });
+      const data = await response.json();
+      
+      console.log('=== SCHEDULE DEBUG ===');
+      console.log('Total:', data.length);
+      console.log('Pending:', data.filter(s => s.status === 'pending').length);
+      console.log('Confirmed:', data.filter(s => s.status === 'confirmed').length);
+      console.log('Completed:', data.filter(s => s.status === 'completed').length);
+      
+      setSchedules(data);
+      
+      // Create calendar events
+      const calendarEvents = data.map(schedule => ({
+        id: schedule._id,
+        title: `${schedule.type === 'pickup' ? 'Pickup' : 'Drop-off'} - ${schedule.donorId?.name || 'Donor'}`,
+        start: new Date(`${schedule.date.split('T')[0]}T${schedule.time}`),
+        end: new Date(new Date(`${schedule.date.split('T')[0]}T${schedule.time}`).getTime() + 3600000),
+        resource: schedule
+      }));
+      
+      setEvents(calendarEvents);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error loading schedules:', error);
+      setLoading(false);
+    }
+  };
+
   const loadVolunteers = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/volunteers`, {
@@ -71,145 +73,92 @@ const loadSchedules = async () => {
     }
   };
 
-  // Same logic as AdminDonations-suggested volunteers ONLY
-const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
-  console.log('\n=== FILTER VOLUNTEERS START ===');
-  console.log('Input - Date:', scheduleDate, 'Time:', scheduleTime);
-  
-  if (!scheduleDate || !scheduleTime) {
-    console.warn('Missing date or time');
-    return [];
-  }
-  
-  // Parse the schedule date and time
-  const scheduleDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
-  const dayOfWeek = scheduleDateTime.toLocaleDateString('en-US', { weekday: 'long' });
-  const [scheduleHour, scheduleMin] = scheduleTime.split(':');
-  const scheduleMinutes = parseInt(scheduleHour) * 60 + parseInt(scheduleMin);
-  
-  console.log('Parsed - Day:', dayOfWeek, 'Minutes:', scheduleMinutes);
-  console.log('Checking', volunteers.length, 'volunteers...\n');
-  
-  // Day abbreviation mapping
-  const dayAbbreviations = {
-    'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday',
-    'thu': 'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
-    'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
-    'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday'
+  const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
+    console.log('\n=== FILTER VOLUNTEERS START ===');
+    console.log('Input - Date:', scheduleDate, 'Time:', scheduleTime);
+    
+    if (!scheduleDate || !scheduleTime) {
+      console.warn('Missing date or time');
+      return [];
+    }
+    
+    const scheduleDateTime = new Date(`${scheduleDate}T${scheduleTime}`);
+    const dayOfWeek = scheduleDateTime.toLocaleDateString('en-US', { weekday: 'long' });
+    const [scheduleHour, scheduleMin] = scheduleTime.split(':');
+    const scheduleMinutes = parseInt(scheduleHour) * 60 + parseInt(scheduleMin);
+    
+    console.log('Parsed - Day:', dayOfWeek, 'Minutes:', scheduleMinutes);
+    
+    const dayAbbreviations = {
+      'mon': 'Monday', 'tue': 'Tuesday', 'wed': 'Wednesday',
+      'thu': 'Thursday', 'fri': 'Friday', 'sat': 'Saturday', 'sun': 'Sunday',
+      'monday': 'Monday', 'tuesday': 'Tuesday', 'wednesday': 'Wednesday',
+      'thursday': 'Thursday', 'friday': 'Friday', 'saturday': 'Saturday', 'sunday': 'Sunday'
+    };
+    
+    const suggested = volunteers.filter(v => {
+      if (v.status !== 'active') return false;
+      if (!v.availability) return false;
+      
+      const timeMatch = v.availability.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+      if (!timeMatch) return false;
+      
+      const [volStartHour, volStartMin] = timeMatch[1].split(':');
+      const [volEndHour, volEndMin] = timeMatch[2].split(':');
+      const startMinutes = parseInt(volStartHour) * 60 + parseInt(volStartMin);
+      const endMinutes = parseInt(volEndHour) * 60 + parseInt(volEndMin);
+      
+      const daysString = v.availability.split(/\d{2}:\d{2}/)[0].trim();
+      
+      let availableDays = [];
+      
+      if (daysString.toLowerCase().includes('all days')) {
+        availableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      } else if (daysString.toLowerCase().includes('weekdays')) {
+        availableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+      } else if (daysString.toLowerCase().includes('weekends')) {
+        availableDays = ['Saturday', 'Sunday'];
+      } else {
+        const dayParts = daysString.split(',').map(d => d.trim().toLowerCase());
+        availableDays = dayParts
+          .map(dayAbbr => {
+            const cleanAbbr = dayAbbr.replace(/[^a-z]/gi, '').toLowerCase();
+            return dayAbbreviations[cleanAbbr];
+          })
+          .filter(Boolean);
+      }
+      
+      const isDayMatch = availableDays.includes(dayOfWeek);
+      if (!isDayMatch) return false;
+      
+      const isTimeMatch = scheduleMinutes >= startMinutes && scheduleMinutes <= endMinutes;
+      return isTimeMatch;
+    });
+    
+    console.log(`Total available: ${suggested.length}`);
+    console.log('=== FILTER VOLUNTEERS END ===\n');
+    
+    return suggested.sort((a, b) => {
+      if (a.role === 'Pickup Driver' && b.role !== 'Pickup Driver') return -1;
+      if (a.role !== 'Pickup Driver' && b.role === 'Pickup Driver') return 1;
+      return 0;
+    });
   };
-  
-  const suggested = volunteers.filter(v => {
-    console.log(`\nChecking ${v.name}:`);
-    console.log(`  Status: ${v.status}`);
-    console.log(`  Availability: ${v.availability}`);
-    
-    if (v.status !== 'active') {
-      console.log(' Not active');
-      return false;
-    }
-    
-    if (!v.availability) {
-      console.log(' No availability set');
-      return false;
-    }
-    
-    // Extract time
-    const timeMatch = v.availability.match(/(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
-    if (!timeMatch) {
-      console.log(' Invalid time format');
-      return false;
-    }
-    
-    const [volStartHour, volStartMin] = timeMatch[1].split(':');
-    const [volEndHour, volEndMin] = timeMatch[2].split(':');
-    const startMinutes = parseInt(volStartHour) * 60 + parseInt(volStartMin);
-    const endMinutes = parseInt(volEndHour) * 60 + parseInt(volEndMin);
-    
-    console.log(`  Time: ${timeMatch[1]} - ${timeMatch[2]} (${startMinutes}-${endMinutes} mins)`);
-    
-    // Extract days
-    const daysString = v.availability.split(/\d{2}:\d{2}/)[0].trim();
-    console.log(`  Days string: "${daysString}"`);
-    
-    let availableDays = [];
-    
-    if (daysString.toLowerCase().includes('all days')) {
-      availableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-      console.log('  All days');
-    } else if (daysString.toLowerCase().includes('weekdays')) {
-      availableDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-      console.log('  Weekdays');
-    } else if (daysString.toLowerCase().includes('weekends')) {
-      availableDays = ['Saturday', 'Sunday'];
-      console.log(' Weekends');
-    } else {
-      const dayParts = daysString.split(',').map(d => d.trim().toLowerCase());
-      availableDays = dayParts
-        .map(dayAbbr => {
-          const cleanAbbr = dayAbbr.replace(/[^a-z]/gi, '').toLowerCase();
-          return dayAbbreviations[cleanAbbr];
-        })
-        .filter(Boolean);
-      console.log(`  Parsed days:`, availableDays);
-    }
-    
-    // Check day match
-    const isDayMatch = availableDays.includes(dayOfWeek);
-    console.log(`  Day match (${dayOfWeek}): ${isDayMatch ? '✓' : '❌'}`);
-    
-    if (!isDayMatch) return false;
-    
-    // Check time match
-    const isTimeMatch = scheduleMinutes >= startMinutes && scheduleMinutes <= endMinutes;
-    console.log(`  Time match (${scheduleMinutes} in ${startMinutes}-${endMinutes}): ${isTimeMatch ? '✓' : '❌'}`);
-    
-    if (!isTimeMatch) return false;
-    
-    console.log(`  ${v.name} IS AVAILABLE`);
-    return true;
-  });
-  
-  console.log(`\nTotal available: ${suggested.length}`);
-  console.log('=== FILTER VOLUNTEERS END ===\n');
-  
-  // Sort by role (Pickup Drivers first)
-  return suggested.sort((a, b) => {
-    if (a.role === 'Pickup Driver' && b.role !== 'Pickup Driver') return -1;
-    if (a.role !== 'Pickup Driver' && b.role === 'Pickup Driver') return 1;
-    return 0;
-  });
-};
 
   const handleSelectEvent = (event) => {
     const schedule = event.resource;
-    console.log('Schedule Info:');
-    console.log('   Date:', schedule.date);
-    console.log('   Time:', schedule.time);
-    console.log('   Type:', schedule.type);
-    console.log('   Status:', schedule.status);
     setSelectedEvent(schedule);
     setSelectedVolunteer(schedule.assignedVolunteer?._id || '');
-    // Filter volunteers based on schedule date/time
-  if (schedule.date && schedule.time) {
-    const dateOnly = schedule.date.split('T')[0];
-    console.log('\nFiltering volunteers');
-    console.log('   Total volunteers:', volunteers.length);
     
-    const available = getSuggestedVolunteers(dateOnly, schedule.time);
-    
-    console.log('   Available:', available.length);
-    if (available.length > 0) {
-      available.forEach(v => console.log(`${v.name} (${v.role})`));
+    if (schedule.date && schedule.time) {
+      const dateOnly = schedule.date.split('T')[0];
+      const available = getSuggestedVolunteers(dateOnly, schedule.time);
+      setFilteredVolunteers(available);
+    } else {
+      setFilteredVolunteers(volunteers);
     }
     
-    setFilteredVolunteers(available);
-  } else {
-    console.warn('No date/time on schedule, showing all volunteers');
-    setFilteredVolunteers(volunteers);
-  }
-  
-  setShowModal(true);
-  console.log('\nModal opened with', filteredVolunteers.length, 'filtered volunteers\n');
+    setShowModal(true);
   };
 
   const updateScheduleStatus = async (scheduleId, newStatus) => {
@@ -255,39 +204,25 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
 
   const eventStyleGetter = (event) => {
     const status = event.resource.status;
-    let backgroundColor, textColor;
+    let backgroundColor;
     
     switch(status) {
-      case 'completed':
-        backgroundColor = '#10b981';
-        textColor = '#ffffff';
-        break;
-      case 'confirmed':
-        backgroundColor = '#3b82f6';
-        textColor = '#ffffff';
-        break;
-      case 'cancelled':
-        backgroundColor = '#ef4444';
-        textColor = '#ffffff';
-        break;
-      default:
-        backgroundColor = '#f59e0b';
-        textColor = '#ffffff';
+      case 'completed': backgroundColor = '#10b981'; break;
+      case 'confirmed': backgroundColor = '#3b82f6'; break;
+      case 'cancelled': backgroundColor = '#ef4444'; break;
+      default: backgroundColor = '#f59e0b';
     }
     
     return {
       style: {
         backgroundColor,
-        color: textColor,
+        color: '#ffffff',
         borderRadius: '6px',
         border: 'none',
         padding: '4px 8px',
         fontSize: '12px',
         fontWeight: '500',
-        cursor: 'pointer',
-        transition: 'all 0.2s ease',
-        position: 'relative',
-        overflow: 'visible'
+        cursor: 'pointer'
       },
       className: 'custom-event'
     };
@@ -298,21 +233,10 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
     let statusBadge, badgeColor;
     
     switch(status) {
-      case 'completed':
-        statusBadge = 'Completed';
-        badgeColor = 'bg-green-600';
-        break;
-      case 'confirmed':
-        statusBadge = 'Confirmed';
-        badgeColor = 'bg-blue-600';
-        break;
-      case 'cancelled':
-        statusBadge = 'Cancelled';
-        badgeColor = 'bg-red-600';
-        break;
-      default:
-        statusBadge = 'Pending';
-        badgeColor = 'bg-yellow-600';
+      case 'completed': statusBadge = 'Completed'; badgeColor = 'bg-green-600'; break;
+      case 'confirmed': statusBadge = 'Confirmed'; badgeColor = 'bg-blue-600'; break;
+      case 'cancelled': statusBadge = 'Cancelled'; badgeColor = 'bg-red-600'; break;
+      default: statusBadge = 'Pending'; badgeColor = 'bg-yellow-600';
     }
 
     return (
@@ -347,51 +271,17 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
   return (
     <div className="min-h-screen bg-gray-50">
       <style>{`
-        .custom-event:hover {
-          transform: scale(1.08);
-          box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-          z-index: 10;
-        }
-        .rbc-event {
-          transition: all 0.2s ease !important;
-        }
-        .event-content {
-          display: flex;
-          flex-direction: column;
-          gap: 2px;
-        }
-        .rbc-day-bg:hover {
-          background-color: #f3f4f6;
-        }
-        .rbc-date-cell:hover {
-          background-color: #e5e7eb;
-          border-radius: 4px;
-        }
-        .rbc-event-content {
-          overflow: visible !important;
-        }
-        .rbc-event[style*="background-color: rgb(245, 158, 11)"]:hover {
-          background-color: #d97706 !important;
-        }
-        .rbc-event[style*="background-color: rgb(59, 130, 246)"]:hover {
-          background-color: #2563eb !important;
-        }
-        .rbc-event[style*="background-color: rgb(16, 185, 129)"]:hover {
-          background-color: #059669 !important;
-        }
-        .rbc-event[style*="background-color: rgb(239, 68, 68)"]:hover {
-          background-color: #dc2626 !important;
-        }
-        .rbc-event:hover {
-          position: relative;
-          z-index: 100;
-        }
+        .custom-event:hover { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.2); z-index: 10; }
+        .rbc-event { transition: all 0.2s ease !important; }
+        .event-content { display: flex; flex-direction: column; gap: 2px; }
+        .rbc-event-content { overflow: visible !important; }
+        .rbc-event:hover { position: relative; z-index: 100; }
       `}</style>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">Pickup & Drop-off Schedule</h1>
-          <p className="text-gray-600">Manage donation logistics - Hover over events to see details</p>
+          <p className="text-gray-600">Manage donation logistics</p>
         </div>
 
         <div className="grid md:grid-cols-4 gap-4 mb-6">
@@ -427,9 +317,7 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
             endAccessor="end"
             onSelectEvent={handleSelectEvent}
             eventPropGetter={eventStyleGetter}
-            components={{
-              event: CustomEvent
-            }}
+            components={{ event: CustomEvent }}
             views={['month', 'week', 'day']}
             view={currentView}
             onView={handleViewChange}
@@ -457,10 +345,7 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
           <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
             <div className="flex justify-between items-start mb-6">
               <h2 className="text-2xl font-bold text-gray-800">Schedule Details</h2>
-              <button
-                onClick={() => setShowModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
+              <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-gray-600">
                 <X className="w-6 h-6" />
               </button>
             </div>
@@ -468,9 +353,7 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <span className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                  selectedEvent.type === 'pickup' 
-                    ? 'bg-blue-100 text-blue-800' 
-                    : 'bg-green-100 text-green-800'
+                  selectedEvent.type === 'pickup' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                 }`}>
                   {selectedEvent.type === 'pickup' ? 'Pickup' : 'Drop-off'}
                 </span>
@@ -538,97 +421,72 @@ const getSuggestedVolunteers = (scheduleDate, scheduleTime) => {
               </div>
 
               {(selectedEvent.status === 'confirmed' || selectedEvent.status === 'pending') && (
-  <div className="bg-blue-50 rounded-lg p-4">
-    <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
-      <Users className="w-5 h-5 mr-2" />
-      Volunteer Assignment
-    </h3>
-    
-    {selectedEvent.assignedVolunteer ? (
-      // Already assigned - show volunteer info
-      <div className="bg-white rounded p-3 space-y-2">
-        <p className="text-sm text-gray-500">Assigned to:</p>
-        <p className="font-medium text-lg">{selectedEvent.assignedVolunteer.name}</p>
-        <p className="text-sm text-gray-600">
-          <span className="font-medium">Role:</span> {selectedEvent.assignedVolunteer.role}
-        </p>
-        <p className="text-sm text-gray-600">
-          <Phone className="w-4 h-4 inline mr-1" />
-          {selectedEvent.assignedVolunteer.phone}
-        </p>
-      </div>
-    ) : (
-      // Not assigned - show filtered dropdown
-      <div className="space-y-3">
-        {/* Show available count */}
-        <p className={`text-sm font-medium ${
-          filteredVolunteers.length > 0 ? 'text-green-700' : 'text-red-700'
-        }`}>
-          {filteredVolunteers.length > 0 
-            ? `${filteredVolunteers.length} volunteer${filteredVolunteers.length > 1 ? 's' : ''} available for this time slot`
-            : 'No volunteers available for this time slot'
-          }
-        </p>
-        
-        {/* CRITICAL: Only show filteredVolunteers in dropdown */}
-        {filteredVolunteers.length > 0 ? (
-          <>
-            <select
-              value={selectedVolunteer}
-              onChange={(e) => setSelectedVolunteer(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">Select Volunteer</option>
-              {filteredVolunteers.map(v => (
-                <option key={v._id} value={v._id}>
-                  {v.name} - {v.role} ({v.phone})
-                </option>
-              ))}
-            </select>
-            
-            <button
-              onClick={assignVolunteer}
-              disabled={!selectedVolunteer}
-              className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-            >
-              Assign Selected Volunteer
-            </button>
-          </>
-        ) : (
-          // Show why no volunteers are available
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-            <p className="text-sm text-red-800 font-medium mb-2">
-              No volunteers match this schedule
-            </p>
-            <p className="text-xs text-red-600 mb-3">
-              Checked {volunteers.length} volunteers - none are available on{' '}
-              {new Date(selectedEvent.date).toLocaleDateString('en-US', { weekday: 'long' })}{' '}
-              at {selectedEvent.time}
-            </p>
-            
-            {/* Show all volunteers for reference */}
-            <details className="text-xs">
-              <summary className="text-red-700 cursor-pointer font-medium mb-2">
-                View all volunteers (not available)
-              </summary>
-              <div className="mt-2 space-y-1 text-gray-600 max-h-40 overflow-y-auto">
-                {volunteers.map(v => (
-                  <p key={v._id} className="border-b border-gray-200 pb-1">
-                    • {v.name} ({v.role})
-                    <br />
-                    <span className="text-xs text-gray-500 ml-3">
-                      {v.availability || 'No availability set'}
-                    </span>
-                  </p>
-                ))}
-              </div>
-            </details>
-          </div>
-        )}
-      </div>
-    )}
-  </div>
-)}
+                <div className="bg-blue-50 rounded-lg p-4">
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center">
+                    <Users className="w-5 h-5 mr-2" />
+                    Volunteer Assignment
+                  </h3>
+                  
+                  {selectedEvent.assignedVolunteer ? (
+                    <div className="bg-white rounded p-3 space-y-2">
+                      <p className="text-sm text-gray-500">Assigned to:</p>
+                      <p className="font-medium text-lg">{selectedEvent.assignedVolunteer.name}</p>
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium">Role:</span> {selectedEvent.assignedVolunteer.role}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        <Phone className="w-4 h-4 inline mr-1" />
+                        {selectedEvent.assignedVolunteer.phone}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className={`text-sm font-medium ${
+                        filteredVolunteers.length > 0 ? 'text-green-700' : 'text-red-700'
+                      }`}>
+                        {filteredVolunteers.length > 0 
+                          ? `${filteredVolunteers.length} volunteer${filteredVolunteers.length > 1 ? 's' : ''} available for this time slot`
+                          : 'No volunteers available for this time slot'
+                        }
+                      </p>
+                      
+                      {filteredVolunteers.length > 0 ? (
+                        <>
+                          <select
+                            value={selectedVolunteer}
+                            onChange={(e) => setSelectedVolunteer(e.target.value)}
+                            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500"
+                          >
+                            <option value="">Select Volunteer</option>
+                            {filteredVolunteers.map(v => (
+                              <option key={v._id} value={v._id}>
+                                {v.name} - {v.role} ({v.phone})
+                              </option>
+                            ))}
+                          </select>
+                          
+                          <button
+                            onClick={assignVolunteer}
+                            disabled={!selectedVolunteer}
+                            className="w-full bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+                          >
+                            Assign Selected Volunteer
+                          </button>
+                        </>
+                      ) : (
+                        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                          <p className="text-sm text-red-800 font-medium mb-2">No volunteers match this schedule</p>
+                          <p className="text-xs text-red-600">
+                            Checked {volunteers.length} volunteers - none are available on{' '}
+                            {new Date(selectedEvent.date).toLocaleDateString('en-US', { weekday: 'long' })}{' '}
+                            at {selectedEvent.time}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="flex space-x-3 pt-4">
                 {selectedEvent.status === 'pending' && (
