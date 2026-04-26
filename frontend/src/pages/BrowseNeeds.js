@@ -481,10 +481,10 @@ const BrowseNeeds = () => {
   </div>
 {donationForm.items && (       
   <DonationImageVerifier
-    itemName={donationForm.items}
-    onVerified={(result) => setImageVerification(result)}
-    onReset={() => setImageVerification(null)}
-  />
+  itemName={donationForm.items}
+  onVerified={(result) => setImageVerification(result)}
+  onReset={() => setImageVerification(null)}
+/>
 )}
 
                 </>
