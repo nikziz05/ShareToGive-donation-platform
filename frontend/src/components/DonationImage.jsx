@@ -151,7 +151,7 @@ const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://kindne
         <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
           <Camera className="w-4 h-4 text-blue-500" />
           Upload Item Photo <span className="text-blue-600 font-semibold">(AI Verification)</span>
-          <span className="text-gray-400 font-normal ml-1">– Optional but recommended</span>
+          
         </label>
 
         <div
