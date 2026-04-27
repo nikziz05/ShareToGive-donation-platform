@@ -6,16 +6,30 @@ router.post('/', auth, async (req, res) => {
   try {
     const { base64Data, mediaType, itemName } = req.body;
 
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { inline_data: { mime_type: mediaType, data: base64Data } },
+    console.log('=== VERIFY IMAGE START ===');
+    console.log('Item:', itemName);
+    console.log('GROQ key exists:', !!process.env.GROQ_API_KEY);
+
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'meta-llama/llama-4-scout-17b-16e-instruct',
+        messages: [
+          {
+            role: 'user',
+            content: [
               {
+                type: 'image_url',
+                image_url: {
+                  url: `data:${mediaType};base64,${base64Data}`
+                }
+              },
+              {
+                type: 'text',
                 text: `You are a donation quality inspector for a charity platform called KindNest.
 Analyze this image of a donated "${itemName}" and assess its physical condition.
 Respond ONLY with a valid JSON object — no markdown, no extra text — in this exact format:
@@ -29,14 +43,18 @@ Labeling guide:
 If the image is unclear or doesn't show the item well, return poor with a note to retake the photo.`
               }
             ]
-          }]
-        })
-      }
-    );
+          }
+        ],
+        max_tokens: 300,
+        temperature: 0.1
+      })
+    });
+
+    console.log('Groq response status:', response.status);
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('Gemini API error:', response.status, errText);
+      console.error('Groq API error:', response.status, errText);
       return res.json({
         content: [{
           text: JSON.stringify({
@@ -50,13 +68,14 @@ If the image is unclear or doesn't show the item well, return poor with a note t
     }
 
     const data = await response.json();
-    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    console.log('Gemini raw response:', rawText);
+    const rawText = data?.choices?.[0]?.message?.content || '';
+    console.log('Groq raw response:', rawText);
 
     let parsed;
     try {
       const clean = rawText.replace(/```json|```/g, '').trim();
       parsed = JSON.parse(clean);
+
       if (parsed.label === 'bad') parsed.label = 'poor';
       if (!['very_good', 'good', 'poor'].includes(parsed.label)) {
         parsed.label = 'good';
@@ -78,6 +97,9 @@ If the image is unclear or doesn't show the item well, return poor with a note t
         reasons: ['Assessment based on overall visual appearance']
       };
     }
+
+    console.log('Final result:', parsed.label, parsed.confidence);
+    console.log('=== VERIFY IMAGE END ===');
 
     res.json({
       content: [{ text: JSON.stringify(parsed) }]
