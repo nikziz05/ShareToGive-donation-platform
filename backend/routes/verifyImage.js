@@ -2,139 +2,90 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 
-function classifyFromCaption(caption, itemName) {
-  if (!caption) return null;
-  const text = caption.toLowerCase();
-  console.log('Classifying caption:', text);
-
-  const poorSignals = [
-    'torn', 'damaged', 'broken', 'dirty', 'stained', 'ripped',
-    'worn', 'tattered', 'ruined', 'hole', 'filthy', 'ragged',
-    'old', 'used', 'wrinkled', 'crumpled'
-  ];
-  const veryGoodSignals = [
-    'clean', 'new', 'bright', 'colorful', 'neat', 'nice',
-    'folded', 'fresh', 'white', 'neatly'
-  ];
-
-  const poorScore = poorSignals.filter(kw => text.includes(kw)).length;
-  const goodScore = veryGoodSignals.filter(kw => text.includes(kw)).length;
-
-  console.log(`Scores — poor: ${poorScore}, good: ${goodScore}`);
-
-  if (poorScore >= 2) {
-    return {
-      label: 'poor',
-      confidence: Math.min(0.93, 0.72 + poorScore * 0.05),
-      summary: `The ${itemName} shows signs of damage or heavy wear.`,
-      reasons: ['Damage or deterioration detected in image', 'Item may not meet donation standards']
-    };
-  } else if (poorScore === 1) {
-    return {
-      label: 'good',
-      confidence: 0.70,
-      summary: `The ${itemName} appears to be in fair condition with some minor wear.`,
-      reasons: ['Some wear detected but item appears usable', 'Passes basic donation criteria']
-    };
-  } else if (goodScore >= 2) {
-    return {
-      label: 'very_good',
-      confidence: Math.min(0.93, 0.80 + goodScore * 0.03),
-      summary: `The ${itemName} appears to be in great condition and suitable for donation.`,
-      reasons: ['Item looks clean and well-maintained', 'No visible damage detected']
-    };
-  } else {
-    return {
-      label: 'good',
-      confidence: 0.74,
-      summary: `The ${itemName} appears to be in acceptable condition for donation.`,
-      reasons: ['Item condition looks adequate for donation', 'Meets basic quality standards']
-    };
-  }
-}
-
 router.post('/', auth, async (req, res) => {
   try {
     const { base64Data, mediaType, itemName } = req.body;
 
-    if (!base64Data || !mediaType) {
-      return res.status(400).json({ error: 'Missing image data' });
-    }
-
-    const HF_TOKEN = process.env.HF_TOKEN;
-    if (!HF_TOKEN) throw new Error('HF_TOKEN not set in environment variables');
-
-    console.log(`\n=== Verifying image for: "${itemName}" ===`);
-
-    // Convert base64 → raw binary Buffer (THIS is what HF models need)
-    const imageBuffer = Buffer.from(base64Data, 'base64');
-
-    // Use BLIP image captioning — send raw binary image bytes
-    // Model: Salesforce/blip-image-captioning-base
     const response = await fetch(
-      'https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-base',
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
       {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${HF_TOKEN}`,
-          'Content-Type': mediaType,        // e.g. image/jpeg
-          'X-Wait-For-Model': 'true'        // wait up to 60s if model is cold
-        },
-        body: imageBuffer                   // raw binary — NOT base64 string
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { inline_data: { mime_type: mediaType, data: base64Data } },
+              {
+                text: `You are a donation quality inspector for a charity platform called KindNest.
+Analyze this image of a donated "${itemName}" and assess its physical condition.
+Respond ONLY with a valid JSON object — no markdown, no extra text — in this exact format:
+{"label":"very_good"|"good"|"poor","confidence":0.0-1.0,"summary":"one concise sentence","reasons":["reason 1","reason 2"]}
+
+Labeling guide:
+- very_good: clean, undamaged, minimal wear, ready to use
+- good: usable but shows some wear, minor stains or small imperfections
+- poor: visibly damaged, heavily stained, torn, broken, or unsuitable
+
+If the image is unclear or doesn't show the item well, return poor with a note to retake the photo.`
+              }
+            ]
+          }]
+        })
       }
     );
 
-    console.log('HF response status:', response.status);
-
     if (!response.ok) {
       const errText = await response.text();
-      console.error('HF captioning error:', response.status, errText.substring(0, 300));
-      throw new Error(`HF API returned ${response.status}`);
+      console.error('Gemini API error:', response.status, errText);
+      return res.json({
+        content: [{
+          text: JSON.stringify({
+            label: 'good',
+            confidence: 0.7,
+            summary: 'Could not fully analyze the image. Please ensure item is in good condition.',
+            reasons: ['Image analysis unavailable — manual review recommended']
+          })
+        }]
+      });
     }
 
     const data = await response.json();
-    console.log('HF raw response:', JSON.stringify(data));
+    const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    console.log('Gemini raw response:', rawText);
 
-    // BLIP captioning returns: [{ generated_text: "a torn yellow jacket..." }]
-    let caption = null;
-    if (Array.isArray(data) && data[0]?.generated_text) {
-      caption = data[0].generated_text;
-    } else if (data?.generated_text) {
-      caption = data.generated_text;
+    let parsed;
+    try {
+      const clean = rawText.replace(/```json|```/g, '').trim();
+      parsed = JSON.parse(clean);
+      if (parsed.label === 'bad') parsed.label = 'poor';
+      if (!['very_good', 'good', 'poor'].includes(parsed.label)) {
+        parsed.label = 'good';
+      }
+    } catch {
+      const lower = rawText.toLowerCase().trim();
+      const label = (lower.includes('bad') || lower.includes('poor') ||
+                     lower.includes('damage') || lower.includes('torn') ||
+                     lower.includes('broken') || lower.includes('unsuitable'))
+        ? 'poor'
+        : lower.includes('very good') || lower.includes('excellent')
+          ? 'very_good'
+          : 'good';
+
+      parsed = {
+        label,
+        confidence: 0.8,
+        summary: rawText.substring(0, 150) || 'Condition assessed from visual inspection.',
+        reasons: ['Assessment based on overall visual appearance']
+      };
     }
 
-    console.log('Caption:', caption);
-
-    if (!caption) {
-      throw new Error('No caption returned from model');
-    }
-
-    const result = classifyFromCaption(caption, itemName);
-
-    if (!result) {
-      throw new Error('Classification failed');
-    }
-
-    console.log('Final result:', result.label, result.confidence);
-
-    return res.json({
-      content: [{ text: JSON.stringify(result) }]
+    res.json({
+      content: [{ text: JSON.stringify(parsed) }]
     });
 
   } catch (err) {
-    console.error('Image verification error:', err.message);
-
-    // Return 200 with error info so frontend shows "Retry" not a crash
-    return res.json({
-      content: [{
-        text: JSON.stringify({
-          label: 'good',
-          confidence: 0.5,
-          summary: 'AI model is warming up — please click Retry in a few seconds.',
-          reasons: ['Model cold start — retry usually works within 20 seconds']
-        })
-      }]
-    });
+    console.error('Image verification error:', err);
+    res.status(500).json({ message: 'Image verification failed: ' + err.message });
   }
 });
 
