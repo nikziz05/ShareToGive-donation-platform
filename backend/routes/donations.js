@@ -202,8 +202,8 @@ router.put('/:id/status', auth, async(req, res) => {
                 
                 ${donation.type === 'physical' ? '<p>Our team will contact you soon regarding the pickup/drop-off schedule.</p>' : '<p>Thank you for your generous contribution!</p>'}
                 
-                <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-                  Track your donation anytime at <a href="${process.env.FRONTEND_URL || 'https://kindnestplatformproject.vercel.app'}">My Donations</a>
+                <p style="color: #6b7280; font-size: 14px; margin-top: 30px;"><a href="${process.env.FRONTEND_URL || 'https://sharetogive.vercel.app/'}
+                  Track your donation anytime at ">My Donations</a>
                 </p>
               </div>
             </div>
@@ -233,7 +233,7 @@ router.put('/:id/status', auth, async(req, res) => {
                 <p>Please browse other active needs where your contribution can make a difference!</p>
                 
                 <p style="text-align: center; margin-top: 30px;">
-                  <a href="${process.env.FRONTEND_URL || 'https://kindnestplatformproject.vercel.app'}" style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Browse Needs</a>
+                  <a href="${process.env.FRONTEND_URL || 'https://sharetogive.vercel.app/'}" style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">Browse Needs</a>
                 </p>
               </div>
             </div>

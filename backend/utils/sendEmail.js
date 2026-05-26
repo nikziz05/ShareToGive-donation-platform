@@ -11,7 +11,7 @@ const sendEmail = async (options) => {
     
     // Send email
     const { data, error } = await resend.emails.send({
-      from: process.env.EMAIL_FROM || 'KindNest <onboarding@resend.dev>',
+      from: process.env.EMAIL_FROM || 'ShareToGive <onboarding@resend.dev>',
       to: [options.email],
       subject: options.subject,
       html: options.html,
