@@ -183,7 +183,7 @@ router.put('/:id/status', auth, async(req, res) => {
 
       const statusMessages = {
         confirmed: {
-          subject: 'Donation Confirmed - KindNest',
+          subject: 'Donation Confirmed - ShareToGive',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <div style="background: linear-gradient(135deg, #3b82f6 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
@@ -191,7 +191,7 @@ router.put('/:id/status', auth, async(req, res) => {
               </div>
               <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 10px 10px;">
                 <p>Hello ${donation.donorId.name},</p>
-                <p>Great news! Your donation has been confirmed by KindNest Foundation.</p>
+                <p>Great news! Your donation has been confirmed by ShareToGive Foundation.</p>
                 
                 <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0;">
                   <h3 style="color: #1f2937; margin-top: 0;">Donation Details:</h3>
@@ -210,7 +210,7 @@ router.put('/:id/status', auth, async(req, res) => {
           `
         },
         rejected: {
-          subject: 'Donation Status Update - KindNest',
+          subject: 'Donation Status Update - ShareToGive',
           html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
               <div style="background: linear-gradient(135deg, #ef4444 0%, #f97316 100%); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">

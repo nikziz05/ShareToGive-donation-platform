@@ -21,7 +21,7 @@ const Navbar = () => {
             <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center">
               <Heart className="w-6 h-6 text-white" />
             </div>
-            <span className="font-bold text-xl text-gray-800">KindNest</span>
+            <span className="font-bold text-xl text-gray-800">ShareToGive</span>
           </Link>
 
           {/* Navigation Links */}

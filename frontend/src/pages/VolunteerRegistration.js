@@ -122,7 +122,7 @@ const VolunteerRegistration = () => {
           </div>
           <h2 className="text-3xl font-bold text-gray-800 mb-4">Registration Submitted!</h2>
           <p className="text-gray-600 mb-6">
-            Thank you for your interest in volunteering with KindNest! Our team will review your application and contact you soon.
+            Thank you for your interest in volunteering with ShareToGive! Our team will review your application and contact you soon.
           </p>
           <button
             onClick={() => setSuccess(false)}
@@ -145,7 +145,7 @@ const VolunteerRegistration = () => {
               <Heart className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Become a Volunteer</h1>
-            <p className="text-gray-600">Join KindNest and make a difference in your community</p>
+            <p className="text-gray-600">Join ShareToGive and make a difference in your community</p>
           </div>
 
           <div className="space-y-6">
@@ -325,7 +325,7 @@ const VolunteerRegistration = () => {
                   onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows="4"
-                  placeholder="Share your motivation for volunteering with KindNest"
+                  placeholder="Share your motivation for volunteering with ShareToGive"
                 />
               </div>
             </div>
@@ -340,7 +340,7 @@ const VolunteerRegistration = () => {
             </button>
 
             <p className="text-xs text-gray-500 text-center">
-              By submitting this form, you agree to be contacted by KindNest regarding volunteer opportunities.
+              By submitting this form, you agree to be contacted by ShareToGive regarding volunteer opportunities.
             </p>
           </div>
         </div>

@@ -199,7 +199,7 @@ router.post('/forgot-password', async (req, res) => {
           </div>
           <div class="content">
             <p>Hello ${user.name},</p>
-            <p>You requested to reset your password for your KindNest account.</p>
+            <p>You requested to reset your password for your ShareToGive account.</p>
             <p>Click the button below to reset your password:</p>
             <p style="text-align: center;">
               <a href="${resetUrl}" class="button">Reset Password</a>
@@ -215,7 +215,7 @@ router.post('/forgot-password', async (req, res) => {
     try {
       await sendEmail({
         email: user.email,
-        subject: 'KindNest - Password Reset Request ',
+        subject: 'ShareToGive - Password Reset Request ',
         html: htmlMessage,
       });
 

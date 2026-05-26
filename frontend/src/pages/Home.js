@@ -11,7 +11,7 @@ const Home = () => {
           <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-500 to-green-500 rounded-full mb-8">
             <Heart className="w-12 h-12 text-white" />
           </div>
-          <h1 className="text-5xl font-bold text-gray-800 mb-6">Welcome to KindNest</h1>
+          <h1 className="text-5xl font-bold text-gray-800 mb-6">Welcome to ShareToGive</h1>
           <p className="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
             Connecting generosity with those in need. Together, we can make a difference in our community.
           </p>

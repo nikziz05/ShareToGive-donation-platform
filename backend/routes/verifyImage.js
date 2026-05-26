@@ -30,7 +30,7 @@ router.post('/', auth, async (req, res) => {
               },
               {
                 type: 'text',
-                text: `You are a donation quality inspector for a charity platform called KindNest.
+                text: `You are a donation quality inspector for a charity platform called ShareToGive.
 Analyze this image of a donated "${itemName}" and assess its physical condition.
 Respond ONLY with a valid JSON object — no markdown, no extra text — in this exact format:
 {"label":"very_good"|"good"|"poor","confidence":0.0-1.0,"summary":"one concise sentence","reasons":["reason 1","reason 2"]}

@@ -209,7 +209,7 @@ router.put('/:id', auth, async (req, res) => {
         
         await sendEmail({
           email: volunteer.email,
-          subject: 'Welcome to KindNest - Volunteer Approval',
+          subject: 'Welcome to ShareToGive - Volunteer Approval',
           html: `
             <!DOCTYPE html>
             <html>
@@ -227,7 +227,7 @@ router.put('/:id', auth, async (req, res) => {
             <body>
               <div class="container">
                 <div class="header">
-                  <h1>Welcome to KindNest!</h1>
+                  <h1>Welcome to ShareToGive!</h1>
                   <p style="font-size: 18px; margin-top: 10px;">You're now an approved volunteer</p>
                 </div>
                 <div class="content">
@@ -246,7 +246,7 @@ router.put('/:id', auth, async (req, res) => {
                   
                   <h3 style="color: #1f2937;">How to Get Started:</h3>
                   <ol style="color: #4b5563;">
-                    <li><strong>Login:</strong> Visit the KindNest website and click "Volunteer Login"</li>
+                    <li><strong>Login:</strong> Visit the ShareToGive website and click "Volunteer Login"</li>
                     <li><strong>Use Your Phone:</strong> Login using your registered phone number: <strong>${volunteer.phone}</strong></li>
                     <li><strong>View Assignments:</strong> Check your dashboard for pickup assignments</li>
                     <li><strong>Accept Tasks:</strong> Accept assignments that match your availability</li>
@@ -263,16 +263,16 @@ router.put('/:id', auth, async (req, res) => {
                   
                   <p>If you have any questions or need assistance, please don't hesitate to reach out to our team.</p>
                   
-                  <p>Thank you for choosing to make a difference with KindNest! 💚</p>
+                  <p>Thank you for choosing to make a difference with ShareToGive! 💚</p>
                   
                   <p style="margin-top: 30px;">
                     Best regards,<br>
-                    <strong>The KindNest Team</strong>
+                    <strong>The ShareToGive Team</strong>
                   </p>
                 </div>
                 
                 <div class="footer">
-                  <p>KindNest Foundation | Connecting generosity with those in need</p>
+                  <p>ShareToGive Foundation | Connecting generosity with those in need</p>
                   <p>This is an automated message. Please do not reply to this email.</p>
                 </div>
               </div>

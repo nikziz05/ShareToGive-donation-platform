@@ -106,7 +106,7 @@ const Login = () => {
           <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-green-500 rounded-full mb-4">
             <Heart className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">KindNest</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">ShareToGive</h1>
           <p className="text-gray-600">Connecting generosity with those in need</p>
         </div>
 
@@ -171,7 +171,7 @@ const Login = () => {
                   value={formData.adminEmail}
                   onChange={(e) => setFormData({ ...formData, adminEmail: e.target.value })}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  placeholder="admin@kindnest1"
+                  placeholder="admin@ShareToGive1"
                 />
               </div>
 
@@ -319,7 +319,7 @@ const Login = () => {
                     placeholder="Enter NGO secret code"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    Contact KindNest admin for NGO registration code
+                    Contact ShareToGive admin for NGO registration code
                   </p>
                 </div>
               )}

@@ -4,7 +4,7 @@ import { Camera, Upload, CheckCircle, XCircle, AlertTriangle, RefreshCw, Image }
 /**
  * DonationImageVerifier
  * 
- * Drop-in component for KindNest's physical donation flow.
+ * Drop-in component for ShareToGive's physical donation flow.
  * Uses Claude Vision API to analyze uploaded item photos and
  * returns a condition label: "Very Good", "Good", or "Poor".
  * 

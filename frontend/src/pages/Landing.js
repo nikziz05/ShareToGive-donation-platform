@@ -95,7 +95,7 @@ const Landing = () => {
       name: 'Rain',
       role: 'Monthly Donor',
       image: donor,
-      quote: 'KindNest made donating so easy! I love that I can schedule pickups.',
+      quote: 'ShareToGive made donating so easy! I love that I can schedule pickups.',
       rating: 5
     },
     {
@@ -109,7 +109,7 @@ const Landing = () => {
       name: 'Vayu Bagga',
       role: 'Beneficiary',
       image: beneficiary,
-      quote: 'KindNest helped our family during tough times. Their transparency and efficiency is remarkable.',
+      quote: 'ShareToGive helped our family during tough times. Their transparency and efficiency is remarkable.',
       rating: 5
     }
   ];
@@ -131,7 +131,7 @@ const Landing = () => {
               <span className={`font-bold transition-all duration-300 ${
                 scrollY > 50 ? 'text-xl text-gray-800' : 'text-2xl text-white'
               }`}>
-                KindNest
+                ShareToGive
               </span>
             </div>
 
@@ -288,7 +288,7 @@ const Landing = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
-              Why Choose KindNest?
+              Why Choose ShareToGive?
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               We've built the most intuitive, transparent, and impactful donation platform
@@ -407,7 +407,7 @@ const Landing = () => {
                 <h3 className="text-2xl font-bold mb-6">Real Stories, Real Impact</h3>
                 <div className="space-y-4">
                   <div className="bg-white bg-opacity-10 rounded-xl p-4">
-                    <p className="italic mb-2">"KindNest helped us provide warm clothes to 500 children this winter."</p>
+                    <p className="italic mb-2">"ShareToGive helped us provide warm clothes to 500 children this winter."</p>
                     <p className="text-sm text-blue-200">- Local School, Patiala</p>
                   </div>
                   <div className="bg-white bg-opacity-10 rounded-xl p-4">
@@ -504,7 +504,7 @@ const Landing = () => {
                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center">
                   <Heart className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">KindNest</span>
+                <span className="text-xl font-bold text-white">ShareToGive</span>
               </div>
               <p className="text-sm">
                 Connecting generosity with those in need. Making the world a better place, one donation at a time.
@@ -524,7 +524,7 @@ const Landing = () => {
             <div>
               <h3 className="text-white font-bold mb-4">Contact</h3>
               <ul className="space-y-2 text-sm">
-                <li>📧 kindnestorg1@gmail.com</li>
+                <li>📧 sharetogiveorg@gmail.com</li>
                 <li>📞 +91 12345 XXXXX</li>
                 <li>📍 Patiala, Punjab, India</li>
               </ul>
@@ -536,13 +536,13 @@ const Landing = () => {
                 to="/login"
                 className="block w-full bg-gradient-to-r from-blue-500 to-green-500 text-white text-center px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
               >
-                Join KindNest
+                Join ShareToGive
               </Link>
             </div>
           </div>
 
           <div className="border-t border-gray-800 pt-8 text-center text-sm">
-            <p>&copy; 2025 KindNest Foundation. All rights reserved.</p>
+            <p>&copy; 2025 ShareToGive Foundation. All rights reserved.</p>
             <p className="mt-2 text-gray-500">Made with ❤️ for the community</p>
             <p></p>
             <p className="mt-2 text-gray-500">Created by: Nikita Shakya</p>

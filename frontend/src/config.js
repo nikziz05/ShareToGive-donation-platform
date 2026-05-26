@@ -1,7 +1,7 @@
 // Application Configuration
 export const APP_CONFIG = {
-  NGO_NAME: 'KindNest Foundation',
-  NGO_EMAIL: 'kindnestorg1@gmail.com',
+  NGO_NAME: 'ShareToGive Foundation',
+  NGO_EMAIL: 'sharetogiveorg@gmail.com',
   NGO_PHONE: '+91 12345 XXXXX',
   NGO_ADDRESS: 'Patiala, Punjab, India'
 };

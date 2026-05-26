@@ -164,7 +164,7 @@ router.put('/:id', auth, async (req, res) => {
                   
                   <p style="margin-top: 30px;">
                     Best regards,<br>
-                    <strong>KindNest System</strong>
+                    <strong>ShareToGive System</strong>
                   </p>
                 </div>
               </div>
@@ -187,7 +187,7 @@ if (volunteerCancelling && updatedSchedule.donorId?.email) {
     
     await sendEmail({
       email: donor.email,
-      subject: 'Pickup Schedule Update - KindNest',
+      subject: 'Pickup Schedule Update - ShareToGive',
       html: `
         <!DOCTYPE html>
         <html>
@@ -222,7 +222,7 @@ if (volunteerCancelling && updatedSchedule.donorId?.email) {
               
               <p style="margin-top: 30px;">
                 Best regards,<br>
-                <strong>The KindNest Team</strong>
+                <strong>The ShareToGive Team</strong>
               </p>
             </div>
           </div>
@@ -248,7 +248,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
     if (volunteer && volunteer.email && volunteer.email !== 'N/A') {
       await sendEmail({
         email: volunteer.email,
-        subject: 'New Pickup Assignment - KindNest',
+        subject: 'New Pickup Assignment - ShareToGive',
         html: `
           <!DOCTYPE html>
           <html>
@@ -304,7 +304,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
                 
                 <p style="margin-top: 30px;">
                   Best regards,<br>
-                  <strong>The KindNest Team</strong>
+                  <strong>The ShareToGive Team</strong>
                 </p>
               </div>
             </div>
@@ -329,7 +329,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
         if (donor.email) {
           await sendEmail({
             email: donor.email,
-            subject: 'Volunteer Assigned for Your Donation Pickup - KindNest',
+            subject: 'Volunteer Assigned for Your Donation Pickup - ShareToGive',
             html: `
               <!DOCTYPE html>
               <html>
@@ -376,7 +376,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
                     
                     <p style="margin-top: 30px;">
                       Best regards,<br>
-                      <strong>The KindNest Team</strong>
+                      <strong>The ShareToGive Team</strong>
                     </p>
                   </div>
                 </div>
@@ -400,7 +400,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
         
         await sendEmail({
           email: donor.email,
-          subject: 'Pickup Verification Code - KindNest',
+          subject: 'Pickup Verification Code - ShareToGive',
           html: `
             <!DOCTYPE html>
             <html>
@@ -443,7 +443,7 @@ if (req.body.assignedVolunteer && !schedule.assignedVolunteer) {
                   
                   <p style="margin-top: 30px;">
                     Best regards,<br>
-                    <strong>The KindNest Team</strong>
+                    <strong>The ShareToGive Team</strong>
                   </p>
                 </div>
               </div>
