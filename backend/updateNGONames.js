@@ -11,7 +11,7 @@ const updateNGONames = async () => {
 
     const result = await Need.updateMany(
       { ngo: 'Hope Foundation' },
-      { $set: { ngo: 'KindNest Foundation' } }
+      { $set: { ngo: 'ShareToGive Foundation' } }
     );
 
     console.log(`Updated ${result.modifiedCount} needs`);

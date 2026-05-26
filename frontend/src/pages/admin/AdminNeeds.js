@@ -56,7 +56,7 @@ const loadNeeds = async () => {
       category: '',
       goal: '',
       urgent: false,
-      ngo: 'Hope Foundation'
+      ngo: 'ShareToGive Foundation'
     });
     setShowModal(true);
   };
